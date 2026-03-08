@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تأكيد الحجز | شركة JR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #f4f4f4; margin: 0; padding-bottom: 50px; }
+    header { background-color: #017143; color: white; padding: 20px; text-align: center; border-bottom: 5px solid #f15a24; }
+    
+    /* تنسيق القائمة - Nav */
+    nav { display: flex; justify-content: center; gap: 1.5rem; background: white; padding: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    nav a { color: #017143; text-decoration: none; font-weight: bold; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
+    nav a:hover { background-color: #f15a24; color: white; }
+
+    .booking-card { max-width: 500px; margin: 30px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    h2 { color: #017143; text-align: center; margin-bottom: 25px; }
+    
+    .option-group { margin-top: 20px; text-align: right; }
+    label { font-weight: bold; color: #555; }
+    select, input { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-family: 'Cairo'; }
+
+    .payment-options { display: flex; gap: 15px; margin-top: 15px; }
+    .method-btn { flex: 1; padding: 15px; border: 2px solid #017143; border-radius: 12px; cursor: pointer; background: white; font-weight: bold; transition: 0.3s; font-size: 1rem; text-align: center; }
+    .method-btn.active { background: #017143; color: white; }
+
+    #wallet-content, #cash-content { display: none; margin-top: 25px; padding: 20px; border-radius: 12px; border: 1px dashed #017143; background: #f9fffb; text-align: center; }
+    
+    .seat-number { font-size: 3rem; font-weight: bold; color: #f15a24; display: block; margin: 10px 0; }
+    .qr-placeholder img { width: 180px; height: 180px; margin: 10px auto; border: 5px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    
+    .confirm-btn { width: 100%; padding: 18px; background: #f15a24; color: white; border: none; border-radius: 10px; margin-top: 25px; font-size: 1.2rem; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .confirm-btn:hover { background: #d4491c; }
+  </style>
+</head>
+<a href="https://wa.me/972508374777" target="_blank" 
+   style="position: fixed; bottom: 30px; left: 30px; background-color: #25d366; 
+          color: white; padding: 15px 20px; border-radius: 50%; font-size: 24px; 
+          box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000;">
+  💬
+</a>
+<body>
+
+<header>
+  <img src="img/lo2.png" alt="JR Logo" style="height:150px; width: auto;">
+  <h1 style="margin: 10px 0 0; font-size: 1.8rem;">شركة باصات القدس - رام الله (JR)</h1>
+</header>
+
+<nav>
+  <a href="index.html">الرئيسية</a>
+  <a href="services.html">خدماتنا</a>
+  <a href="schedule.html">جدول الرحلات</a>
+  <a href="join.html">انضم إلينا</a>
+  <a href="contact.html">تواصل معنا</a>
+</nav>
+
+<div class="booking-card">
+  <h2>أكمل تفاصيل حجزك</h2>
+  
+  <div class="option-group">
+    <label>الاسم بالكامل:</label>
+    <input type="text" id="userName" placeholder="أدخل اسمك هنا">
+  </div>
+
+  <div class="option-group">
+    <label>اختر طريقة الدفع:</label>
+    <div class="payment-options">
+      <div id="btn-wallet" class="method-btn" onclick="showPayment('wallet')">محفظة إلكترونية</div>
+      <div id="btn-cash" class="method-btn" onclick="showPayment('cash')">دفع عند الصعود</div>
+    </div>
+  </div>
+
+  <div id="wallet-content">
+    <p>امسح الكود التالي لإتمام الدفع:</p>
+    <div class="qr-placeholder">
+       <img src="img/qr-code.png" alt="QR Code">
+    </div>
+    <p style="font-size: 0.9rem; color: #555;">يرجى إرفاق صورة الإيصال بعد الدفع.</p>
+  </div>
+
+  <div id="cash-content">
+    <p>تم تأكيد حجزك مبدئياً! رقم مقعدك هو:</p>
+    <span class="seat-number" id="dynamicSeat">--</span>
+    <p style="font-size: 0.8rem; color: #d9534f;">* يرجى إظهار هذه البطاقة للسائق عند الصعود.</p>
+  </div>
+
+  <button class="confirm-btn" onclick="finalConfirm()">تأكيد الحجز النهائي</button>
+</div>
+
+<script>
+  function showPayment(type) {
+    document.getElementById('wallet-content').style.display = 'none';
+    document.getElementById('cash-content').style.display = 'none';
+    document.getElementById('btn-wallet').classList.remove('active');
+    document.getElementById('btn-cash').classList.remove('active');
+
+    if (type === 'wallet') {
+      document.getElementById('wallet-content').style.display = 'block';
+      document.getElementById('btn-wallet').classList.add('active');
+    } else if (type === 'cash') {
+      // توليد رقم مقعد عشوائي بين 1 و 50
+      const randomSeat = Math.floor(Math.random() * 50) + 1;
+      document.getElementById('dynamicSeat').innerText = "A-" + randomSeat;
+      
+      document.getElementById('cash-content').style.display = 'block';
+      document.getElementById('btn-cash').classList.add('active');
+    }
+  }
+
+  function finalConfirm() {
+    const name = document.getElementById('userName').value;
+    if(name === "") {
+      alert("يرجى إدخال الاسم أولاً");
+    } else {
+      alert("شكرًا يا " + name + "! تم استلام طلب حجزك بنجاح.");
+    }
+  }
+</script>
+
+</body>
+</html>
