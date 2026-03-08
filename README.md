@@ -1,4 +1,4 @@
-# BusJeursale
+# BusJeursalem
 
 💻 Project Overview
 This repository contains the source code for the "JR Bus" reservation system. The project provides a functional interface for managing travel bookings between Jerusalem and Ramallah.
